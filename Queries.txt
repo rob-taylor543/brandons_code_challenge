@@ -106,10 +106,26 @@ order by count(rents.film_id) desc limit 5
 
 
 e.
-select name, count(*)
-from language lang
-inner join film fil on fil.language_id = lang.language_id
-group by name
+select name, count
+from 
+(
+	select language_id, count(*)
+	from film fil
+	group by language_id
+) as films_per_langid
+inner join language lang on films_per_langid.language_id = lang.language_id
+
+
+f.
+select first_name, last_name, sum
+from 
+(
+	select customer_id, sum(amount)
+	from payment paym
+	group by customer_id
+) as paysum_per_custid
+inner join customer cust on cust.customer_id = paysum_per_custid.customer_id
+order by sum desc limit 1
 
 
 
