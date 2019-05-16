@@ -105,5 +105,12 @@ group by fil.title
 order by count(rents.film_id) desc limit 5
 
 
+e.
+select name, count(*)
+from language lang
+inner join film fil on fil.language_id = lang.language_id
+group by name
+
+
 
 
