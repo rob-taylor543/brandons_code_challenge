@@ -1,0 +1,109 @@
+a.
+with cust_who_rented_30_or_more as (
+	SELECT cust.first_name, cust.last_name, r.total_rentals
+	from customer cust
+	inner join
+	(
+		Select count(rental_id) as total_rentals, customer_id as id
+		from rental as rent
+		group by id
+		having count(rental_id) > 29
+	) as r
+	on cust.customer_id = r.id
+)
+
+select * from cust_who_rented_30_or_more
+
+
+b.
+with desc_rentals_by_title as (
+	select f.title, rentals_per_fid.sum
+	from
+	(
+		select fids_count.film_id, sum(fids_count.count)
+		from
+		(
+			select inv.film_id, subquery.count
+			from inventory inv
+			inner join
+			(
+				select inventory_id, count(inventory_id)
+				from rental
+				group by inventory_id
+			) as subquery
+			on inv.inventory_id = subquery.inventory_id
+		) as fids_count
+		group by fids_count.film_id
+	) as rentals_per_fid
+	right join film f
+	on f.film_id = rentals_per_fid.film_id
+	order by rentals_per_fid.sum desc nulls last
+)
+
+select * from desc_rentals_by_title
+
+
+c.
+with desc_rentals_by_title as (
+	select f.title, rentals_per_fid.sum
+	from
+	(
+		select fids_count.film_id, sum(fids_count.count)
+		from
+		(
+			select inv.film_id, subquery.count
+			from inventory inv
+			inner join
+			(
+				select inventory_id, count(inventory_id)
+				from rental
+				group by inventory_id
+			) as subquery
+			on inv.inventory_id = subquery.inventory_id
+		) as fids_count
+		group by fids_count.film_id
+	) as rentals_per_fid
+	right join film f
+	on f.film_id = rentals_per_fid.film_id
+	order by rentals_per_fid.sum desc nulls last
+)
+
+select * from desc_rentals_by_title limit 1
+
+
+d.
+with rentals_in_Lethbridge as (
+	select * from rental rent
+	inner join inventory inv on rent.inventory_id = inv.inventory_id
+	inner join store sto on inv.store_id = sto.store_id
+	inner join address addr on addr.address_id = sto.address_id
+	inner join city ci on ci.city_id = addr.city_id
+	where ci.city = 'Lethbridge'
+)
+
+select fil.title, count(rents.film_id)
+from rentals_in_Lethbridge rents
+inner join film fil on fil.film_id = rents.film_id
+group by fil.title
+order by count(rents.film_id) desc
+
+
+d.1
+with rentals_in_Lethbridge as (
+	select * from rental rent
+	inner join inventory inv on rent.inventory_id = inv.inventory_id
+	inner join store sto on inv.store_id = sto.store_id
+	inner join address addr on addr.address_id = sto.address_id
+	inner join city ci on ci.city_id = addr.city_id
+	where ci.city = 'Lethbridge'
+)
+
+select fil.title, count(rents.film_id)
+from rentals_in_Lethbridge rents
+inner join film fil on fil.film_id = rents.film_id
+group by fil.title
+order by count(rents.film_id) desc limit 5
+
+
+
+
