@@ -30,7 +30,7 @@ namespace MyFirstWinformsApp
             Console.WriteLine($"Query thread started at: {timeStamp}");
 
             Form1 myForm = new Form1();
-            myForm.Size = new System.Drawing.Size(1100, 600)
+            myForm.Size = new System.Drawing.Size(1100, 600);
 
             timeStamp = GetTimestamp(DateTime.Now);
             Console.WriteLine($"Form setup finished at: {timeStamp}");
@@ -107,7 +107,7 @@ namespace MyFirstWinformsApp
 
         public static DataTable GetAllRentals()
         {
-            string connStr = $"Server=localhost;Port=5432;User Id=postgres;Password=kImpa20$;Database=dvdrental;";
+            string connStr = $"Server=localhost;Port=5432;User Id=postgres;Password=password;Database=dvdrental;";
             DBHelper myDBHelper = new DBHelper(connStr);
             DataTable rentalData = myDBHelper.ExecuteTable("SELECT * FROM rental");
             return rentalData;
